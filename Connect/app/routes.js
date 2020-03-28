@@ -69,20 +69,27 @@ module.exports = function(app, passport, db) {
       })
     })
 //user will click on another users post to start a private chat
-    app.put('/chatmessage', (req, res) => {
-      db.collection('chats')
-      .findOneAndUpdate({name: req.body.name, msg: req.body.msg}, { //(.chat after .msg?)
+app.get('/chatmessage', function(req, res) {
+    //tells us what page to render in the dom
+    res.render('chats.ejs');
+});
+    app.post('/chatmessage', (req, res) => {
+      db.collection('dms')
+      .save({name: req.body.name, dms: req.body.dms}, {
 
-        $set: {
-//user can also like posts here will update globally
-          thumbUp:req.body.thumbUp + 1
-        }
-      }, {
-        sort: {_id: -1},
-        upsert: true
-      }, (err, result) => {
+//         $set: {
+// //user can also like posts here will update globally
+//           thumbUp:req.body.thumbUp + 1
+//        }
+      },
+       // {
+       //  sort: {_id: -1},
+       //  upsert: true
+       // },
+       (err, result) => {
         if (err) return res.send(err)
         res.send(result)
+        res.render('chatmessage', { dms: req.body.dms })
       })
     })
 
